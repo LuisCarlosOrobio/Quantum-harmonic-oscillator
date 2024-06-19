@@ -1,5 +1,8 @@
 # Hamiltonian Oscillator
 
+![Lilliputian_Hitcher](https://github.com/LuisCarlosOrobio/Quantum-harmonic-oscillator/assets/140061957/190af71d-c1e0-4574-877a-067d7fbca0ba)
+
+
 This project simulates the quantum harmonic oscillator and visualizes the time evolution of the particle's position using an animation.
 
 ## Prerequisites
