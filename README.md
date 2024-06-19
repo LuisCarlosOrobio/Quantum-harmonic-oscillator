@@ -25,7 +25,3 @@ Ensure you have Python installed. It's recommended to use a virtual environment 
 4. **Run the code**
    ```bash
    python hamiltonian_oscillator.py
-
-   
-
-
