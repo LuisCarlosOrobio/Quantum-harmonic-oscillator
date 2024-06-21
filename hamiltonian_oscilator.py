@@ -2,6 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 from mpl_toolkits.mplot3d import Axes3D
+from scipy.sparse import diags
+from scipy.sparse.linalg import eigsh
 
 # Constants and parameters
 hbar = 1.0545718e-34  # Reduced Planck's constant (J s)
@@ -18,17 +20,15 @@ dx = x[1] - x[0]           # Spatial step size
 time_steps = int(T_max / dt)  # Number of time steps
 t = np.linspace(0, T_max, time_steps)  # Time grid points
 
-# Construct the Hamiltonian matrix
-T = - (hbar**2 / (2 * m * dx**2)) * (np.diag(np.ones(N-1), -1) - 2 * np.diag(np.ones(N), 0) + np.diag(np.ones(N-1), 1))
-# Kinetic energy matrix as a tridiagonal matrix
+# Construct the Hamiltonian matrix using sparse matrix
+diagonals = [-2 * np.ones(N), np.ones(N-1), np.ones(N-1)]
+offsets = [0, -1, 1]
+T = - (hbar**2 / (2 * m * dx**2)) * diags(diagonals, offsets).toarray()
 V = 0.5 * m * omega**2 * np.diag(x**2)
-# Potential energy matrix as a diagonal matrix
 H = T + V
-# Total Hamiltonian matrix
 
 # Solve the eigenvalue problem
 E, psi = np.linalg.eigh(H)
-# Eigenvalues (E) and eigenvectors (psi) of the Hamiltonian
 
 # Define the initial wave packet
 x0 = 0
@@ -66,7 +66,7 @@ ax.set_title('Quantum Harmonic Oscillator')
 particle = [ax.plot_surface(x_sphere, y_sphere, z_sphere, color='b')]
 
 # Update function for the animation
-def update(frame):
+def update(frame, psi_0, E, psi):
     global particle
     for p in particle:
         p.remove()  # Remove the previous particle position
@@ -80,5 +80,5 @@ def update(frame):
     particle[0] = ax.plot_surface(x_sphere + x_pos, y_sphere + y_pos, z_sphere + z_pos, color='b')  # Update the particle position
 
 # Create the animation
-ani = FuncAnimation(fig, update, frames=time_steps, interval=50)
+ani = FuncAnimation(fig, update, fargs=(psi_0, E, psi), frames=time_steps, interval=50)
 plt.show()
